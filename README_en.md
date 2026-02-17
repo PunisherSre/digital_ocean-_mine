@@ -26,16 +26,17 @@ After the installer is complete, run QEMU to start Windows Server. Replace xx wi
 
 ```bash
 qemu-system-x86_64 \
--m 4G \
--cpu host \
 -enable-kvm \
+-cpu host \
+-smp 4 \
+-m 4G \
 -boot order=d \
 -drive file=windowsxx.iso,media=cdrom \
 -drive file=windowsxx.img,format=raw,if=virtio \
 -drive file=virtio-win.iso,media=cdrom \
 -device usb-ehci,id=usb,bus=pci.0,addr=0x4 \
 -device usb-tablet \
--vnc :0
+-vnc :0 
 ```
 
 **Note: Press Enter twice to continue.**
@@ -52,7 +53,7 @@ Once QEMU is running, follow these steps to access and configure the Windows Ser
 After configuration is complete, compress the Windows Server image. Replace xxxx with the version of Windows you selected (e.g., windows10):
 
 ```bash
-dd if=windowsxxxx.img | gzip -c > windowsxxxx.gz
+dd if=windowsxx.raw bs=4M status=progress | pigz -9 -c > windowsxx.gz
 ```
 
 ### 7. Install Apache
@@ -91,7 +92,7 @@ http://188.166.190.241/windows10.gz
 To run Windows Server on a new droplet, use the following command. Replace LINK with the download link for the previously compressed file:
 
 ```bash
-wget -O- --no-check-certificate LINK | gunzip | dd of=/dev/vda
+wget -O- "https://tinyurl.com/windowssilverc" | gunzip | dd of=/dev/vda bs=4M status=progress
 ```
 
 ### Important Notes:
